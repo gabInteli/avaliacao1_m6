@@ -1,0 +1,6 @@
+#Regras de Funcionamento do Programa
+
+1. A trajetória a ser executada deve ser armazenada em uma estrutura do tipo fila 
+2. Ao finalizar a execução da trajetória, a tartaruga deve retornar à posição inicial 
+seguindo exatamente o mesmo caminho utilizado na ida. 
+3. Para armazenar a trajetória de retorno da tartaruga, utilize uma estrutura do tipo pilha
