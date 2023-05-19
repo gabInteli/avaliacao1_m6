@@ -79,11 +79,12 @@ class MissionReturn():
 
 
 class TurtleController(Node):
-    def __init__(self, mission_control,mission_return, control_period=0.02):
+    def __init__(self, mission_control, control_period=0.02):
+    #Fail: def __init__(self, mission_control,mission_return, control_period=0.02):
         super().__init__('turtle_controller')
         self.pose = Pose(x=-40.0)
         self.setpoint = Pose(x=-40.0)
-        self.mission_return = mission_return
+        #self.mission_return = mission_return
         self.mission_control = mission_control
         self.publisher = self.create_publisher(
             msg_type=Twist,
