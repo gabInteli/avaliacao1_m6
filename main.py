@@ -32,6 +32,7 @@ class Pose(TPose):
         return abs(self.x - other.x) < MAX_DIFF \
         and abs(self.y - other.y) < MAX_DIFF \
 
+#Fila de pontos aplicadas as posições
 class MissionControl(deque):
     def __init__(self, points):
         super().__init__()
@@ -46,11 +47,43 @@ class MissionControl(deque):
     def dequeue(self):
         return super().popleft()
 
+class MissionControl(deque):
+    def __init__(self, points):
+        super().__init__()
+        for i in range(0,5):
+            new_pose = Pose()
+            new_pose.x, new_pose.y = points[i]
+            self.enqueue(new_pose)
+
+    def enqueue(self, x):
+        super().append(x)
+    
+    def dequeue(self):
+        return super().popleft()
+
+
+class MissionReturn():
+    def __init__(self, points):
+        self.items = [points]
+        for i in range(5,0):
+            new_pose = Pose()
+            new_pose.x, new_pose.y = points[i]
+            self.append(new_pose)
+
+    # Adicionando um elemento na pilha
+    def push(self, item):
+        self.items.append(item)
+    # Removendo e retornando o elemento no topo da pilha
+    def pop(self):
+        return self.items.pop()
+
+
 class TurtleController(Node):
-    def __init__(self, mission_control, control_period=0.02):
+    def __init__(self, mission_control,mission_return, control_period=0.02):
         super().__init__('turtle_controller')
         self.pose = Pose(x=-40.0)
         self.setpoint = Pose(x=-40.0)
+        self.mission_return = mission_return
         self.mission_control = mission_control
         self.publisher = self.create_publisher(
             msg_type=Twist,
@@ -93,6 +126,9 @@ class TurtleController(Node):
             self.setpoint = self.pose + self.mission_control.dequeue()
             self.get_logger().info(f"A tartaruga chegou em {self.pose}, \
                                    andando para {self.setpoint}")
+            #self.setpoint = self.pose + self.mission_return.pop()
+            #self.get_logger().info(f"A tartaruga retornou em {self.pose}, \
+            #                      andando para {self.setpoint}")
         except IndexError:
             self.get_logger().info(f"Fim da jornada!")
             exit()
@@ -102,10 +138,10 @@ class TurtleController(Node):
         if self.setpoint.x == -40.0:
             self.update_setpoint()
 
-
 def main(args=None):
     rclpy.init(args=args)
     mc = MissionControl(points)
+    #mr = MissionReturn(points)
     tc = TurtleController(mc)
     rclpy.spin(tc)
     tc.destroy_node()
